@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>הטרק של ליאור — Berchtesgaden</title>
+<style>
+  :root{
+    --bg:#faf8f4; --card:#ffffff; --text:#1c1c1c; --muted:#6b6b63; --accent:#2f6f4f;
+    --accent-ink:#ffffff; --danger:#a3271d; --danger-bg:#fbeae8; --border:#e2ddd0; --chip:#eef1ea; --link:#1d5f9e;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14181a; --card:#1d2326; --text:#ecece7; --muted:#a3a89f; --accent:#7fd9a8;
+      --accent-ink:#0e1a14; --danger:#ff8a80; --danger-bg:#3a1f1c; --border:#333c3a; --chip:#25302c; --link:#7fb8e6;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;line-height:1.5;padding-bottom:60px}
+  a{color:var(--link)}
+  header{padding:16px;text-align:center;border-bottom:1px solid var(--border);background:var(--card)}
+  header h1{margin:0 0 4px;font-size:1.3rem}
+  header .sub{color:var(--muted);font-size:.9rem}
+  main{max-width:600px;margin:0 auto;padding:14px 12px}
+  #status{margin:12px 0;padding:12px;border-radius:10px;background:var(--chip);font-weight:700;text-align:center;font-size:1rem}
+  #status.live{background:var(--accent);color:var(--accent-ink)}
+  #status.urgent{background:var(--danger-bg);color:var(--danger)}
+  section.block{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+  section.block h2{margin:0 0 10px;font-size:1.05rem}
+  .day{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--border)}
+  .day:last-child{border-bottom:none}
+  .day.today{background:var(--chip);border-radius:8px;padding:10px;margin:2px 0}
+  .day .num{font-weight:800;color:var(--accent);min-width:28px;text-align:center}
+  .day .info{flex:1 1 auto;min-width:0;overflow-wrap:break-word}
+  .day .date{color:var(--muted);font-size:.8rem}
+  .day .title{font-weight:700}
+  .day .links{display:flex;gap:6px;flex:none}
+  .day .links a{text-decoration:none;font-size:1.05rem}
+  table.flights{width:100%;border-collapse:collapse;font-size:.9rem}
+  table.flights td,table.flights th{padding:6px 4px;border-bottom:1px solid var(--border);text-align:right}
+  table.flights th{color:var(--muted);font-weight:600}
+  .sosbar{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);padding:8px 12px;text-align:center;z-index:5}
+  .sosbar a{display:inline-flex;align-items:center;gap:6px;background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger);text-decoration:none;font-size:.9rem;font-weight:700;padding:8px 20px;border-radius:8px}
+  footer{text-align:center;font-size:.78rem;color:var(--muted);margin-top:10px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>הטרק של ליאור 🥾</h1>
+  <div class="sub">Berchtesgaden, גרמניה/אוסטריה · 1–8 בספטמבר 2026</div>
+</header>
+
+<main>
+  <div id="status"></div>
+
+  <section class="block">
+    <h2>📅 מסלול יום־יום</h2>
+    <div id="days"></div>
+  </section>
+
+  <section class="block">
+    <h2>✈️ טיסות</h2>
+    <table class="flights">
+      <tr><th>תאריך</th><th>טיסה</th><th>מסלול</th><th>המראה</th><th>נחיתה</th></tr>
+      <tr><td>1.9 (ג')</td><td>6H:247</td><td>ת״א ← זלצבורג</td><td>08:35</td><td>11:10</td></tr>
+      <tr><td>8.9 (ג')</td><td>6H:248</td><td>זלצבורג ← ת״א</td><td>12:10</td><td>16:45</td></tr>
+    </table>
+  </section>
+
+  <section class="block">
+    <h2>📞 טלפונים לחירום</h2>
+    <div style="font-size:.9rem">
+      <b>חירום כללי (אירופה):</b> <a href="tel:112">112</a><br>
+      <b>ספק הטלפון הלוויני (24/7, לחירום בלבד):</b> <a href="tel:0366006505">03-600-6505</a><br>
+      <b>ביטוח נסיעות — PassportCard</b> (פוליסה 310909717, כולל ביטוח אתגרי):<br>
+      מוקד חירום מחו״ל: <a href="tel:97298920930"><bdi>+972-9-8920930</bdi></a>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:2px">* המספר מאתר PassportCard באינטרנט, לא אומת מול הפוליסה עצמה — כדאי לוודא</div>
+    </div>
+  </section>
+
+  <footer>
+    לפרטים המלאים (מזג אוויר, הזמנות, עלויות) — <a href="./">הדף המלא של ליאור</a>
+  </footer>
+</main>
+
+<div class="sosbar">
+  <a href="tel:0366006505">🆘 חירום — התקשרו</a>
+</div>
+
+<script>
+function bdi(s){ return `<bdi>${s}</bdi>`; }
+const DAYS = [
+  {n:0, date:"2026-09-01", he:"ג' 1.9", title:`נחיתה בזלצבורג ← ${bdi("Königssee")} + ${bdi("Klettersteig")} ${bdi("Grünstein")}`, phone:null, maps:"https://www.google.com/maps?q=47.5928,12.9850"},
+  {n:1, date:"2026-09-02", he:"ד' 2.9", title:`${bdi("Königssee")} ← ${bdi("Watzmannhaus")}`, phone:"+498652964222", maps:"https://www.google.com/maps?q=47.5713,12.9338"},
+  {n:2, date:"2026-09-03", he:"ה' 3.9", title:`${bdi("Watzmannhaus")} ← ${bdi("Ingolstädter Haus")}`, phone:"+4365828353", maps:"https://www.google.com/maps?q=47.5016,12.8872"},
+  {n:3, date:"2026-09-04", he:"ו' 4.9", title:`${bdi("Ingolstädter Haus")} ← ${bdi("Kärlingerhaus")} (הקטע הכי קשה)`, phone:"+4986526091010", maps:"https://www.google.com/maps?q=47.4955,12.9372"},
+  {n:4, date:"2026-09-05", he:"ש' 5.9", title:`${bdi("Kärlingerhaus")} ← ${bdi("Wasseralm")}`, phone:"+4986526091160", maps:"https://www.google.com/maps?q=47.5130,12.9520"},
+  {n:5, date:"2026-09-06", he:"א' 6.9", title:`${bdi("Wasseralm")} ← ${bdi("Carl-von-Stahl-Haus")} (חציית ${bdi("Hagengebirge")})`, phone:"+4986526559922", maps:"https://www.google.com/maps?q=47.5747,13.0426"},
+  {n:6, date:"2026-09-07", he:"ב' 7.9", title:`${bdi("Carl-von-Stahl-Haus")} ← מעבורת ← זלצבורג`, phone:null, maps:"https://www.google.com/maps?q=47.5928,12.9850"},
+  {n:7, date:"2026-09-08", he:"ג' 8.9", title:"טיסה חזרה מזלצבורג", phone:null, maps:null},
+];
+
+function render(){
+  const now = new Date();
+  const tripStart = new Date(2026,8,1);
+  const tripEnd = new Date(2026,8,8,23,59,59);
+  let todayIdx = -1;
+  DAYS.forEach((d,i) => { if(now.toDateString() === new Date(d.date+"T00:00:00").toDateString()) todayIdx = i; });
+
+  const statusEl = document.getElementById("status");
+  if(todayIdx >= 0){
+    statusEl.textContent = `🥾 היום יום ${todayIdx} מתוך 7 — ${DAYS[todayIdx].title}`;
+    statusEl.className = "live";
+  } else if(now < tripStart){
+    const n = Math.ceil((tripStart-now)/86400000);
+    statusEl.textContent = `🗓️ עוד ${n} ימים ליציאה (1.9.2026)`;
+    statusEl.className = n<=3 ? "urgent" : "";
+  } else if(now > tripEnd){
+    statusEl.textContent = "✅ הטיול הסתיים";
+    statusEl.className = "";
+  } else {
+    statusEl.textContent = "בדרך";
+    statusEl.className = "";
+  }
+
+  document.getElementById("days").innerHTML = DAYS.map((d,i) => {
+    const isToday = i === todayIdx;
+    const phoneLink = d.phone ? `<a href="tel:${d.phone}" title="התקשרות לבקתה">📞</a>` : "";
+    const mapLink = d.maps ? `<a href="${d.maps}" target="_blank" rel="noopener" title="מיקום במפה">📍</a>` : "";
+    return `<div class="day${isToday?" today":""}">
+      <div class="num">D${d.n}</div>
+      <div class="info"><div class="date">${d.he}</div><div class="title">${d.title}</div></div>
+      <div class="links">${phoneLink}${mapLink}</div>
+    </div>`;
+  }).join("");
+}
+render();
+</script>
+</body>
+</html>
