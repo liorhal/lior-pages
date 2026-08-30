@@ -1,0 +1,1210 @@
+<meta charset="UTF-8">
+<title>Curfew Console</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --paper: #eef1f5;
+    --surface: #ffffff;
+    --surface-sunken: #e3e7ee;
+    --ink: #1c222b;
+    --ink-soft: #4d5766;
+    --ink-faint: #808a99;
+    --line: #d3d9e2;
+    --accent: #c8631a;
+    --accent-ink: #ffffff;
+    --accent-soft: #f3e3d3;
+    --success: #257a54;
+    --success-soft: #dcefe6;
+    --danger: #b3402f;
+    --danger-soft: #f6e0dc;
+    --focus: #2d6fd1;
+    --shadow: 0 1px 2px rgba(28, 34, 43, 0.06), 0 8px 24px rgba(28, 34, 43, 0.06);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #12161c;
+      --surface: #1a1f27;
+      --surface-sunken: #10141a;
+      --ink: #e9ecf1;
+      --ink-soft: #a7b0bf;
+      --ink-faint: #707a8a;
+      --line: #2b323d;
+      --accent: #e2914f;
+      --accent-ink: #1c1200;
+      --accent-soft: #3a2a17;
+      --success: #4bbd8e;
+      --success-soft: #16352a;
+      --danger: #e2796a;
+      --danger-soft: #3a201c;
+      --focus: #6fa3ec;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #12161c;
+    --surface: #1a1f27;
+    --surface-sunken: #10141a;
+    --ink: #e9ecf1;
+    --ink-soft: #a7b0bf;
+    --ink-faint: #707a8a;
+    --line: #2b323d;
+    --accent: #e2914f;
+    --accent-ink: #1c1200;
+    --accent-soft: #3a2a17;
+    --success: #4bbd8e;
+    --success-soft: #16352a;
+    --danger: #e2796a;
+    --danger-soft: #3a201c;
+    --focus: #6fa3ec;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace; }
+  ::selection { background: var(--accent-soft); }
+
+  a { color: var(--focus); }
+  button { font-family: inherit; }
+  input, textarea, select, button {
+    font-size: inherit;
+    color: inherit;
+  }
+  input:focus-visible, textarea:focus-visible, button:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .shell {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 28px 20px 64px;
+  }
+
+  header.top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 6px;
+  }
+  header.top h1 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  header.top .badge {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
+  p.lede {
+    margin: 0 0 28px;
+    color: var(--ink-soft);
+    max-width: 62ch;
+  }
+
+  section.card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  section.card > h2 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    margin: 0 0 16px;
+  }
+
+  /* device tabs */
+  .device-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .device-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 8px 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface-sunken);
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 13.5px;
+  }
+  .device-tab.active {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
+  }
+  .device-tab .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--success);
+    flex: none;
+  }
+  .device-tab.active .dot { background: var(--accent-ink); opacity: .55; }
+  .device-tab .dot.off { background: var(--ink-faint); opacity: .5; }
+  .device-tab button.remove-device {
+    border: none;
+    background: transparent;
+    color: inherit;
+    opacity: 0.55;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+    padding: 0;
+  }
+  .device-tab button.remove-device:hover { opacity: 1; background: rgba(0,0,0,0.12); }
+
+  .add-device {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px dashed var(--line);
+    background: transparent;
+    color: var(--ink-faint);
+    cursor: pointer;
+    font-size: 13.5px;
+  }
+  .add-device:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* device settings row */
+  .device-settings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    margin: 18px 0 4px;
+  }
+  .field-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .field-inline label {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .switch {
+    position: relative;
+    width: 38px; height: 22px;
+    flex: none;
+  }
+  .switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .switch .track {
+    position: absolute; inset: 0;
+    background: var(--line);
+    border-radius: 999px;
+    transition: background .15s ease;
+  }
+  .switch .thumb {
+    position: absolute; top: 2px; left: 2px;
+    width: 18px; height: 18px;
+    background: var(--surface);
+    border-radius: 50%;
+    transition: transform .15s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  }
+  .switch input:checked + .track { background: var(--success); }
+  .switch input:checked + .track + .thumb { transform: translateX(16px); }
+
+  input.num {
+    width: 68px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface-sunken);
+    color: var(--ink);
+  }
+
+  /* weekly agenda */
+  .agenda { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+  .day-row {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 12px;
+    align-items: start;
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+  }
+  .day-row:first-child { border-top: none; }
+  .day-label {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink-soft);
+    padding-top: 8px;
+  }
+  .segments { display: flex; flex-direction: column; gap: 8px; }
+  .segment {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .segment input[type="time"] {
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface-sunken);
+    color: var(--ink);
+    font-family: "IBM Plex Mono", monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  .segment .arrow { color: var(--ink-faint); }
+  .segment .overnight-badge {
+    font-size: 11px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 3px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .segment .warning-badge {
+    font-size: 11px;
+    color: var(--danger);
+    background: var(--danger-soft);
+    padding: 3px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .segment button.remove-seg {
+    border: none;
+    background: transparent;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 13px;
+    opacity: .75;
+    padding: 4px;
+  }
+  .segment button.remove-seg:hover { opacity: 1; }
+  .add-segment {
+    align-self: flex-start;
+    border: none;
+    background: transparent;
+    color: var(--focus);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 4px 0;
+  }
+  .add-segment:hover { text-decoration: underline; }
+  .no-segments { color: var(--ink-faint); font-size: 13px; padding-top: 8px; }
+
+  .legacy-note {
+    background: var(--accent-soft);
+    color: var(--ink);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  .empty-state {
+    color: var(--ink-faint);
+    font-size: 14px;
+    padding: 12px 0;
+  }
+
+  /* buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: var(--surface-sunken);
+    color: var(--ink);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 13.5px;
+  }
+  .btn:hover { border-color: var(--ink-faint); }
+  .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+  .btn.primary:hover { filter: brightness(1.05); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+  textarea.json-out, textarea.json-in {
+    width: 100%;
+    min-height: 180px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface-sunken);
+    color: var(--ink);
+    padding: 12px;
+    resize: vertical;
+    font-variant-numeric: tabular-nums;
+  }
+  textarea.json-out { min-height: 220px; }
+
+  .toast {
+    position: fixed;
+    bottom: 22px; left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    box-shadow: var(--shadow);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .url-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .url-field label { font-size: 12.5px; color: var(--ink-soft); }
+  .url-field input {
+    padding: 9px 10px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: var(--surface-sunken);
+    color: var(--ink);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+  }
+
+  .install-cmd {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface-sunken);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 10px 12px;
+    margin-top: 10px;
+    overflow-x: auto;
+  }
+  .install-cmd code {
+    white-space: pre;
+    font-size: 12.5px;
+    flex: 1;
+  }
+  .install-cmd button {
+    flex: none;
+    border: none;
+    background: transparent;
+    color: var(--focus);
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 500;
+  }
+
+  details.import { margin-top: 4px; }
+  details.import > summary {
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 500;
+    padding: 4px 0;
+  }
+  .import-body { margin-top: 10px; }
+  .import-error {
+    color: var(--danger);
+    font-size: 13px;
+    margin-top: 8px;
+  }
+
+  footer.hint {
+    color: var(--ink-faint);
+    font-size: 12.5px;
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .save-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin: 4px 0 28px;
+  }
+  .btn.large {
+    padding: 13px 28px;
+    font-size: 15.5px;
+    border-radius: 11px;
+  }
+  .save-status {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+  }
+
+  details.advanced {
+    margin-top: 8px;
+  }
+  details.advanced > summary {
+    cursor: pointer;
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    padding: 8px 0;
+    border-top: 1px solid var(--line);
+    width: 100%;
+  }
+  details.advanced > summary::-webkit-details-marker { display: none; }
+  details.advanced > summary::before {
+    content: "▸";
+    font-size: 11px;
+    transition: transform .15s ease;
+  }
+  details.advanced[open] > summary::before { transform: rotate(90deg); }
+  details.advanced > summary:hover { color: var(--ink); }
+  details.advanced .card { margin-top: 16px; }
+</style>
+
+<div class="shell">
+  <header class="top">
+    <h1>Curfew Console</h1>
+  </header>
+  <p class="lede">
+    Choose the hours each laptop can be used. Outside those hours, it locks
+    itself &mdash; automatically, over and over, until the next allowed time.
+  </p>
+
+  <section class="card">
+    <h2>Your laptops</h2>
+    <div class="legacy-note" id="legacyNote" hidden></div>
+    <div class="device-tabs" id="deviceTabs"></div>
+
+    <div class="device-settings" id="deviceSettings"></div>
+
+    <div class="agenda" id="agenda"></div>
+  </section>
+
+  <div class="save-row">
+    <button class="btn primary large" id="saveChangesBtn">Save changes</button>
+    <div id="saveStatus" class="save-status"></div>
+  </div>
+
+  <details class="advanced">
+    <summary>Advanced (technical setup)</summary>
+    <p class="lede" style="margin: 16px 0;">
+      This is one-time technical setup, normally done once by whoever set up
+      the laptops. Everyday schedule changes only need the simple view above.
+    </p>
+
+    <section class="card">
+      <h2>This laptop's re-lock timing</h2>
+      <div class="device-settings" id="deviceAdvancedSettings"></div>
+    </section>
+
+    <section class="card">
+      <h2>Shared schedule URL</h2>
+      <div class="url-field">
+        <label for="scheduleUrlInput">Raw URL both laptops fetch (e.g. a GitHub Gist "Raw" link)</label>
+        <input id="scheduleUrlInput" type="text" placeholder="https://gist.githubusercontent.com/you/xxxx/raw/schedule.json" />
+      </div>
+      <p class="lede" style="margin: 4px 0 16px; font-size: 13px;">
+        Run this once on each laptop, from an elevated PowerShell window (right-click PowerShell, "Run as administrator") &mdash; installing or re-installing the task needs that. Just starting or stopping an already-installed task usually doesn't.
+      </p>
+      <div id="installCmds"></div>
+
+      <h2 style="margin-top: 24px;">If a laptop stops reacting to schedule changes</h2>
+      <p class="lede" style="margin-bottom: 12px; font-size: 13px;">
+        Run this on that laptop (also needs an elevated PowerShell window) to clear out any stuck background copies and restart cleanly.
+      </p>
+      <div class="install-cmd">
+        <code id="restartCmdCode" class="mono"></code>
+        <button type="button" id="copyRestartCmdBtn">Copy</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Sync with GitHub Gist</h2>
+      <p class="lede" style="margin-bottom: 16px;">
+        This page reads and writes your gist directly &mdash; that's what
+        powers the Save button above. It only reaches github.com when this
+        file runs outside claude.ai's sandbox: save it and open it locally
+        (double-click it), or host it somewhere of your own. On the hosted
+        claude.ai link, saving will fail and you should use Copy JSON below
+        instead.
+      </p>
+      <div class="url-field">
+        <label for="gistIdInput">Gist ID or URL</label>
+        <input id="gistIdInput" type="text" placeholder="https://gist.github.com/you/xxxxxxxxxxxx" />
+      </div>
+      <div class="url-field">
+        <label for="gistFilenameInput">Filename inside the gist</label>
+        <input id="gistFilenameInput" type="text" placeholder="schedule.json" value="schedule.json" />
+      </div>
+      <div class="url-field">
+        <label for="gistTokenInput">Personal access token (classic, "gist" scope only)</label>
+        <input id="gistTokenInput" type="password" placeholder="ghp_..." autocomplete="off" />
+      </div>
+      <div class="field-inline" style="margin-bottom: 14px;">
+        <input type="checkbox" id="gistRememberInput" style="width:auto;" />
+        <label for="gistRememberInput" style="text-transform:none; letter-spacing:0;">Remember token on this device (stored unencrypted in this browser)</label>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="gistLoadBtn">Reload from Gist</button>
+        <button class="btn primary" id="gistSaveBtn">Save to Gist</button>
+        <a class="btn" id="gistCreateTokenLink" href="https://github.com/settings/tokens/new?scopes=gist&description=Curfew%20Console" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">Create a token &#8599;</a>
+      </div>
+      <div id="gistStatus" style="margin-top: 10px; font-size: 13px;"></div>
+      <div id="syncBadge" style="margin-top: 6px; font-size: 12px; color: var(--ink-faint);"></div>
+    </section>
+
+    <section class="card">
+      <h2>Schedule JSON</h2>
+      <textarea class="json-out mono" id="jsonOut" readonly spellcheck="false"></textarea>
+      <div class="btn-row" style="margin-top: 12px;">
+        <button class="btn primary" id="copyBtn">Copy JSON</button>
+        <button class="btn" id="downloadBtn">Download schedule.json</button>
+      </div>
+
+      <details class="import">
+        <summary>Import existing JSON to keep editing it</summary>
+        <div class="import-body">
+          <textarea class="json-in mono" id="jsonIn" placeholder="Paste the contents of your existing schedule.json here"></textarea>
+          <div class="btn-row" style="margin-top: 10px;">
+            <button class="btn" id="loadBtn">Load into editor</button>
+          </div>
+          <div class="import-error" id="importError" hidden></div>
+        </div>
+      </details>
+    </section>
+  </details>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  var STORAGE_KEY = "curfew-console-state-v1";
+  var DEFAULT_GIST_ID = "f84bae230a1342f46a4ea4bc7350d5cb";
+  var DEFAULT_SCHEDULE_URL = "https://gist.githubusercontent.com/liorhal/" + DEFAULT_GIST_ID + "/raw/schedule.json";
+
+  function defaultState() {
+    return {
+      order: ["laptop1", "laptop2"],
+      active: "laptop1",
+      scheduleUrl: DEFAULT_SCHEDULE_URL,
+      devices: {
+        laptop1: {
+          enabled: true,
+          lockIntervalSeconds: 10,
+          windows: { Mon: [{ start: "07:00", end: "23:00" }], Tue: [{ start: "07:00", end: "23:00" }], Wed: [{ start: "07:00", end: "23:00" }], Thu: [{ start: "07:00", end: "23:00" }], Fri: [{ start: "07:00", end: "23:00" }], Sat: [{ start: "09:00", end: "01:00" }], Sun: [{ start: "09:00", end: "01:00" }] }
+        },
+        laptop2: {
+          enabled: true,
+          lockIntervalSeconds: 10,
+          windows: { Mon: [{ start: "06:30", end: "22:30" }], Tue: [{ start: "06:30", end: "22:30" }], Wed: [{ start: "06:30", end: "22:30" }], Thu: [{ start: "06:30", end: "22:30" }], Fri: [], Sat: [], Sun: [{ start: "06:30", end: "22:30" }] }
+        }
+      }
+    };
+  }
+
+  function emptyDevice() {
+    var w = {};
+    DAYS.forEach(function (d) { w[d] = []; });
+    return { enabled: true, lockIntervalSeconds: 10, windows: w };
+  }
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (parsed && parsed.devices && parsed.order) return parsed;
+      }
+    } catch (e) {}
+    return defaultState();
+  }
+
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  var state = loadState();
+
+  var toastTimer = null;
+  function toast(msg) {
+    var el = document.getElementById("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.classList.remove("show"); }, 1800);
+  }
+
+  function sanitizeId(raw) {
+    return raw.toLowerCase().trim().replace(/[^a-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
+  }
+
+  function timeToMinutes(t) {
+    var parts = t.split(":");
+    return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+  }
+
+  // Returns { segIndex: true } for every segment (within one day's list)
+  // that overlaps at least one other segment in that same list.
+  function findOverlappingSegments(segs) {
+    var ranges = segs.map(function (seg) {
+      var s = timeToMinutes(seg.start);
+      var e = timeToMinutes(seg.end);
+      if (e <= s) e += 24 * 60; // spans midnight (or same start/end, treated as covering a full day)
+      return [s, e];
+    });
+    var overlapping = {};
+    for (var a = 0; a < ranges.length; a++) {
+      for (var b = a + 1; b < ranges.length; b++) {
+        if (ranges[a][0] < ranges[b][1] && ranges[b][0] < ranges[a][1]) {
+          overlapping[a] = true;
+          overlapping[b] = true;
+        }
+      }
+    }
+    return overlapping;
+  }
+
+  function el(tag, attrs, children) {
+    var node = document.createElement(tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (k) {
+        if (k === "class") node.className = attrs[k];
+        else if (k === "text") node.textContent = attrs[k];
+        else if (k.indexOf("on") === 0 && typeof attrs[k] === "function") node.addEventListener(k.slice(2), attrs[k]);
+        else node.setAttribute(k, attrs[k]);
+      });
+    }
+    (children || []).forEach(function (c) { if (c) node.appendChild(c); });
+    return node;
+  }
+
+  function render() {
+    renderTabs();
+    renderSettingsAndAgenda();
+    renderInstallCmds();
+    renderJsonOut();
+    saveState();
+  }
+
+  function renderTabs() {
+    var wrap = document.getElementById("deviceTabs");
+    wrap.innerHTML = "";
+    state.order.forEach(function (id) {
+      var dev = state.devices[id];
+      var dot = el("span", { class: "dot" + (dev.enabled ? "" : " off") });
+      var label = el("span", { text: id });
+      var removeBtn = el("button", {
+        class: "remove-device", type: "button", "aria-label": "Remove " + id, text: "×",
+        onclick: function (e) {
+          e.stopPropagation();
+          if (state.order.length <= 1) { toast("Keep at least one laptop"); return; }
+          state.order = state.order.filter(function (x) { return x !== id; });
+          delete state.devices[id];
+          if (state.active === id) state.active = state.order[0];
+          render();
+        }
+      });
+      var tab = el("div", {
+        class: "device-tab" + (state.active === id ? " active" : ""),
+        onclick: function () { state.active = id; render(); }
+      }, [dot, label, removeBtn]);
+      wrap.appendChild(tab);
+    });
+
+    var addBtn = el("button", {
+      class: "add-device", type: "button",
+      onclick: function () {
+        var suggestion = "laptop" + (state.order.length + 1);
+        var raw = window.prompt("What's this laptop called?", suggestion);
+        if (raw === null) return;
+        var id = sanitizeId(raw);
+        if (!id) { toast("Please enter a name"); return; }
+        if (state.devices[id]) { toast("That name is already used"); return; }
+        state.devices[id] = emptyDevice();
+        state.order.push(id);
+        state.active = id;
+        render();
+      },
+      text: "+ Add a laptop"
+    });
+    wrap.appendChild(addBtn);
+  }
+
+  function renderSettingsAndAgenda() {
+    var settingsWrap = document.getElementById("deviceSettings");
+    var agendaWrap = document.getElementById("agenda");
+    settingsWrap.innerHTML = "";
+    agendaWrap.innerHTML = "";
+
+    var dev = state.devices[state.active];
+    if (!dev) return;
+
+    // enabled switch
+    var switchInput = el("input", { type: "checkbox" });
+    switchInput.checked = dev.enabled;
+    switchInput.addEventListener("change", function () { dev.enabled = switchInput.checked; render(); });
+    var switchEl = el("label", { class: "switch" }, [
+      switchInput,
+      el("span", { class: "track" }),
+      el("span", { class: "thumb" })
+    ]);
+    settingsWrap.appendChild(el("div", { class: "field-inline" }, [
+      el("label", { text: "Curfew turned on" }), switchEl
+    ]));
+
+    // interval (advanced only)
+    var advWrap = document.getElementById("deviceAdvancedSettings");
+    if (advWrap) {
+      advWrap.innerHTML = "";
+      var intervalInput = el("input", { class: "num mono", type: "number", min: "1", step: "1" });
+      intervalInput.value = dev.lockIntervalSeconds;
+      intervalInput.addEventListener("change", function () {
+        var v = parseInt(intervalInput.value, 10);
+        dev.lockIntervalSeconds = (isFinite(v) && v > 0) ? v : 10;
+        intervalInput.value = dev.lockIntervalSeconds;
+        render();
+      });
+      advWrap.appendChild(el("div", { class: "field-inline" }, [
+        el("label", { text: "Re-check every (sec)" }), intervalInput
+      ]));
+    }
+
+    // weekly agenda
+    DAYS.forEach(function (day) {
+      var segsWrap = el("div", { class: "segments" });
+      var segs = dev.windows[day] || [];
+
+      if (segs.length === 0) {
+        segsWrap.appendChild(el("div", { class: "no-segments", text: "Locked all day" }));
+      }
+
+      var overlapMap = findOverlappingSegments(segs);
+
+      segs.forEach(function (seg, idx) {
+        var startInput = el("input", { type: "time", value: seg.start });
+        var endInput = el("input", { type: "time", value: seg.end });
+        // Commit on blur, not on every keystroke: a full re-render while the
+        // field still has focus (which a "change"/"input" listener would
+        // trigger, since type="time" fires change mid-edit as each segment
+        // like the hour completes) destroys and recreates this input,
+        // dropping focus and swallowing whatever digit was typed next.
+        startInput.addEventListener("blur", function () { seg.start = startInput.value || seg.start; render(); });
+        endInput.addEventListener("blur", function () { seg.end = endInput.value || seg.end; render(); });
+
+        var rowChildren = [
+          startInput,
+          el("span", { class: "arrow", text: "→" }),
+          endInput
+        ];
+        if (seg.start && seg.end) {
+          if (seg.start === seg.end) {
+            rowChildren.push(el("span", { class: "warning-badge", text: "same start & end — covers the whole day" }));
+          } else if (seg.end < seg.start) {
+            rowChildren.push(el("span", { class: "overnight-badge", text: "into the next day" }));
+          }
+        }
+        if (overlapMap[idx]) {
+          rowChildren.push(el("span", { class: "warning-badge", text: "overlaps another time below" }));
+        }
+        rowChildren.push(el("button", {
+          class: "remove-seg", type: "button", "aria-label": "Remove this time",
+          text: "× Remove",
+          onclick: function () { segs.splice(idx, 1); render(); }
+        }));
+        segsWrap.appendChild(el("div", { class: "segment" }, rowChildren));
+      });
+
+      var addSeg = el("button", {
+        class: "add-segment", type: "button",
+        onclick: function () {
+          var last = segs[segs.length - 1];
+          var start = last ? last.end : "08:00";
+          segs.push({ start: start, end: "18:00" });
+          dev.windows[day] = segs;
+          render();
+        },
+        text: "+ Add a time"
+      });
+      segsWrap.appendChild(addSeg);
+
+      agendaWrap.appendChild(el("div", { class: "day-row" }, [
+        el("div", { class: "day-label", text: day }),
+        segsWrap
+      ]));
+    });
+  }
+
+  function buildExportObject() {
+    var out = {};
+    state.order.forEach(function (id) {
+      var dev = state.devices[id];
+      var unlockedWindows = [];
+      DAYS.forEach(function (day) {
+        (dev.windows[day] || []).forEach(function (seg) {
+          if (seg.start && seg.end) unlockedWindows.push({ days: [day], start: seg.start, end: seg.end });
+        });
+      });
+      out[id] = { enabled: !!dev.enabled, lockIntervalSeconds: dev.lockIntervalSeconds || 10, unlockedWindows: unlockedWindows };
+    });
+    return out;
+  }
+
+  function renderJsonOut() {
+    var out = buildExportObject();
+    document.getElementById("jsonOut").value = JSON.stringify(out, null, 2);
+  }
+
+  function renderInstallCmds() {
+    var wrap = document.getElementById("installCmds");
+    wrap.innerHTML = "";
+    var url = state.scheduleUrl || "<your schedule url>";
+    state.order.forEach(function (id) {
+      var cmdText = '.\\install.ps1 -ScheduleUrl "' + url + '" -DeviceId "' + id + '"';
+      var codeEl = el("code", { class: "mono", text: cmdText });
+      var copyCmdBtn = el("button", {
+        type: "button", text: "Copy",
+        onclick: function () { copyText(cmdText, "Install command copied"); }
+      });
+      wrap.appendChild(el("div", { class: "install-cmd" }, [codeEl, copyCmdBtn]));
+    });
+  }
+
+  function copyText(text, okMessage) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        toast(okMessage);
+      }, function () {
+        toast("Copy failed — select and copy manually");
+      });
+    } else {
+      toast("Clipboard unavailable — select and copy manually");
+    }
+  }
+
+  document.getElementById("scheduleUrlInput").addEventListener("input", function (e) {
+    state.scheduleUrl = e.target.value;
+    renderInstallCmds();
+    saveState();
+  });
+  document.getElementById("scheduleUrlInput").value = state.scheduleUrl || "";
+
+  var RESTART_CMD = [
+    'Get-CimInstance Win32_Process -Filter "Name=\'powershell.exe\'" | Where-Object { $_.CommandLine -like \'*LaptopLock.ps1*\' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }',
+    'Stop-ScheduledTask -TaskName "LaptopLockSchedule" -ErrorAction SilentlyContinue',
+    'Start-ScheduledTask -TaskName "LaptopLockSchedule"'
+  ].join("\n");
+  document.getElementById("restartCmdCode").textContent = RESTART_CMD;
+  document.getElementById("copyRestartCmdBtn").addEventListener("click", function () {
+    copyText(RESTART_CMD, "Restart command copied");
+  });
+
+  document.getElementById("copyBtn").addEventListener("click", function () {
+    copyText(document.getElementById("jsonOut").value, "JSON copied to clipboard");
+  });
+
+  var downloadsNS = null;
+  if (window.claude && typeof window.claude.use === "function") {
+    window.claude.use("downloads").then(function (ns) {
+      downloadsNS = ns;
+      if (!ns) document.getElementById("downloadBtn").disabled = true;
+    }).catch(function () {
+      document.getElementById("downloadBtn").disabled = true;
+    });
+  } else {
+    document.getElementById("downloadBtn").disabled = true;
+  }
+
+  document.getElementById("downloadBtn").addEventListener("click", function () {
+    if (!downloadsNS) { toast("Download isn't available here — use Copy instead"); return; }
+    downloadsNS.save({ filename: "schedule.json", data: document.getElementById("jsonOut").value })
+      .then(function () { toast("Saved schedule.json"); })
+      .catch(function (err) {
+        if (err && err.code === "declined") return;
+        toast("Couldn't save — use Copy instead");
+      });
+  });
+
+  document.getElementById("loadBtn").addEventListener("click", function () {
+    var errEl = document.getElementById("importError");
+    errEl.hidden = true;
+    var raw = document.getElementById("jsonIn").value;
+    var parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (e) {
+      errEl.textContent = "That isn't valid JSON: " + e.message;
+      errEl.hidden = false;
+      return;
+    }
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+      errEl.textContent = "Expected an object keyed by device id.";
+      errEl.hidden = false;
+      return;
+    }
+
+    var newDevices = {};
+    var newOrder = [];
+    var legacyIds = [];
+    Object.keys(parsed).forEach(function (id) {
+      var src = parsed[id] || {};
+      var dev = emptyDevice();
+      dev.enabled = src.enabled !== false;
+      dev.lockIntervalSeconds = src.lockIntervalSeconds || 10;
+      var hasUnlocked = Array.isArray(src.unlockedWindows);
+      if (!hasUnlocked && Array.isArray(src.windows)) legacyIds.push(id);
+      (src.unlockedWindows || []).forEach(function (w) {
+        var days = Array.isArray(w.days) ? w.days : [];
+        days.forEach(function (d) {
+          if (dev.windows[d] && w.start && w.end) dev.windows[d].push({ start: w.start, end: w.end });
+        });
+      });
+      newDevices[id] = dev;
+      newOrder.push(id);
+    });
+
+    if (newOrder.length === 0) {
+      errEl.textContent = "No devices found in that JSON.";
+      errEl.hidden = false;
+      return;
+    }
+
+    state.devices = newDevices;
+    state.order = newOrder;
+    state.active = newOrder[0];
+
+    var legacyEl = document.getElementById("legacyNote");
+    if (legacyIds.length) {
+      legacyEl.hidden = false;
+      legacyEl.textContent = "The saved plan for " + legacyIds.join(", ") +
+        " needs to be rebuilt with the hour picker below — it's shown as locked all day for now. " +
+        "Set the hours, then press Save changes.";
+    } else {
+      legacyEl.hidden = true;
+    }
+
+    render();
+    toast("Loaded " + newOrder.length + " device(s)");
+  });
+
+  // --- GitHub Gist sync (only reachable when this page runs outside the claude.ai sandbox) ---
+  var GIST_KEY = "curfew-console-gist-v1";
+  var gistIdInput = document.getElementById("gistIdInput");
+  var gistFilenameInput = document.getElementById("gistFilenameInput");
+  var gistTokenInput = document.getElementById("gistTokenInput");
+  var gistRememberInput = document.getElementById("gistRememberInput");
+  var gistStatusEl = document.getElementById("gistStatus");
+
+  function loadGistPrefs() {
+    try {
+      var raw = localStorage.getItem(GIST_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return { gistId: DEFAULT_GIST_ID, filename: "schedule.json", remember: false, token: "" };
+  }
+  function saveGistPrefs() {
+    try {
+      localStorage.setItem(GIST_KEY, JSON.stringify({
+        gistId: gistIdInput.value,
+        filename: gistFilenameInput.value,
+        remember: gistRememberInput.checked,
+        token: gistRememberInput.checked ? gistTokenInput.value : ""
+      }));
+    } catch (e) {}
+  }
+  var gistPrefs = loadGistPrefs();
+  gistIdInput.value = gistPrefs.gistId || "";
+  gistFilenameInput.value = gistPrefs.filename || "schedule.json";
+  gistRememberInput.checked = !!gistPrefs.remember;
+  gistTokenInput.value = gistPrefs.remember ? (gistPrefs.token || "") : "";
+  [gistIdInput, gistFilenameInput, gistTokenInput, gistRememberInput].forEach(function (elm) {
+    elm.addEventListener("change", saveGistPrefs);
+  });
+
+  function setGistStatus(msg, kind) {
+    gistStatusEl.textContent = msg;
+    gistStatusEl.style.color = kind === "error" ? "var(--danger)" : kind === "ok" ? "var(--success)" : "var(--ink-soft)";
+  }
+
+  function extractGistId(raw) {
+    if (!raw) return "";
+    var trimmed = raw.trim();
+    var m = trimmed.match(/gist\.github\.com\/(?:[^/]+\/)?([0-9a-fA-F]+)/);
+    if (m) return m[1];
+    var cleaned = trimmed.split("#")[0].split("?")[0];
+    var parts = cleaned.split("/").filter(Boolean);
+    return parts.length ? parts[parts.length - 1] : trimmed;
+  }
+
+  function gistRequest(method, body) {
+    var id = extractGistId(gistIdInput.value);
+    if (!id) return Promise.reject(new Error("Enter a valid gist ID or URL"));
+    var headers = { "Accept": "application/vnd.github+json" };
+    var token = gistTokenInput.value.trim();
+    if (token) headers["Authorization"] = "Bearer " + token;
+    var opts = { method: method, headers: headers };
+    if (body) {
+      headers["Content-Type"] = "application/json";
+      opts.body = JSON.stringify(body);
+    }
+    return fetch("https://api.github.com/gists/" + encodeURIComponent(id), opts).then(function (res) {
+      if (!res.ok) {
+        return res.json().catch(function () { return {}; }).then(function (j) {
+          throw new Error("GitHub API " + res.status + (j.message ? ": " + j.message : ""));
+        });
+      }
+      return res.json();
+    });
+  }
+
+  // Builds the STABLE raw URL (no revision hash), which GitHub always
+  // redirects to the latest saved content. The API's own file.raw_url is
+  // pinned to the exact revision that existed at request time — using it
+  // here would freeze every installed laptop to whatever the schedule
+  // looked like at that moment, silently ignoring every edit made after.
+  function applyStableScheduleUrl(data, fname) {
+    if (data && data.owner && data.owner.login && data.id) {
+      var stableUrl = "https://gist.githubusercontent.com/" + data.owner.login + "/" + data.id + "/raw/" + encodeURIComponent(fname);
+      state.scheduleUrl = stableUrl;
+      document.getElementById("scheduleUrlInput").value = stableUrl;
+      renderInstallCmds();
+      saveState();
+    }
+  }
+
+  var syncBadgeEl = document.getElementById("syncBadge");
+  function setSyncBadge(text) { syncBadgeEl.textContent = text; }
+
+  var saveStatusEl = document.getElementById("saveStatus");
+  function setSaveStatus(msg, kind) {
+    saveStatusEl.textContent = msg;
+    saveStatusEl.style.color = kind === "error" ? "var(--danger)" : kind === "ok" ? "var(--success)" : "var(--ink-soft)";
+  }
+
+  function loadFromGist(isAuto) {
+    setGistStatus(isAuto ? "Loading saved schedule…" : "Loading…");
+    var fname = gistFilenameInput.value.trim() || "schedule.json";
+    return gistRequest("GET").then(function (data) {
+      var file = data.files && data.files[fname];
+      if (!file) throw new Error('No file named "' + fname + '" in that gist');
+      document.getElementById("jsonIn").value = file.content;
+      document.getElementById("loadBtn").click();
+      applyStableScheduleUrl(data, fname);
+      setGistStatus("Loaded from Gist just now.", "ok");
+      setSyncBadge("synced from Gist just now");
+      setSaveStatus("Showing the latest saved plan.", "ok");
+    }).catch(function (err) {
+      var msg = err.message || "Couldn't reach GitHub from this page.";
+      setGistStatus(isAuto ? "Couldn't auto-load the saved schedule (" + msg + ") — showing your last local draft instead." : msg, "error");
+      setSyncBadge("Gist unreachable here — showing local draft");
+      if (isAuto) setSaveStatus("Couldn't check for the latest plan — showing what was last saved on this device.", "error");
+    });
+  }
+
+  document.getElementById("gistLoadBtn").addEventListener("click", function () {
+    saveGistPrefs();
+    loadFromGist(false);
+  });
+
+  if (gistIdInput.value.trim()) {
+    loadFromGist(true);
+  } else {
+    setSyncBadge("no Gist configured — local draft only");
+  }
+
+  // Shared by both the simple "Save changes" button and the advanced "Save to Gist" button.
+  function performGistSave() {
+    saveGistPrefs();
+    if (!gistTokenInput.value.trim()) {
+      return Promise.reject(new Error("NO_TOKEN"));
+    }
+    var fname = gistFilenameInput.value.trim() || "schedule.json";
+    var content = document.getElementById("jsonOut").value;
+    var body = { files: {} };
+    body.files[fname] = { content: content };
+    return gistRequest("PATCH", body).then(function (data) {
+      var file = data.files && data.files[fname];
+      applyStableScheduleUrl(data, fname);
+      return file;
+    });
+  }
+
+  document.getElementById("gistSaveBtn").addEventListener("click", function () {
+    setGistStatus("Saving…");
+    performGistSave().then(function () {
+      setGistStatus("Saved to Gist just now.", "ok");
+      setSyncBadge("synced to Gist just now");
+    }).catch(function (err) {
+      if (err.message === "NO_TOKEN") {
+        setGistStatus('Enter a token with "gist" scope to save.', "error");
+      } else {
+        setGistStatus(err.message || "Couldn't reach GitHub from this page.", "error");
+      }
+    });
+  });
+
+  document.getElementById("saveChangesBtn").addEventListener("click", function () {
+    setSaveStatus("Saving…");
+    performGistSave().then(function () {
+      setSaveStatus("Saved ✓", "ok");
+      setGistStatus("Saved to Gist just now.", "ok");
+      setSyncBadge("synced to Gist just now");
+      toast("Saved");
+    }).catch(function (err) {
+      if (err.message === "NO_TOKEN") {
+        setSaveStatus("Not connected yet — open Advanced below and connect once.", "error");
+        setGistStatus('Enter a token with "gist" scope to save.', "error");
+      } else {
+        setSaveStatus("Couldn't save right now — open Advanced below for details.", "error");
+        setGistStatus(err.message || "Couldn't reach GitHub from this page.", "error");
+      }
+    });
+  });
+
+  render();
+})();
+</script>
