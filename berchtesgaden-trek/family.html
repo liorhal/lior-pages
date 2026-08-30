@@ -60,6 +60,13 @@
   </section>
 
   <section class="block">
+    <h2>🗺️ מפת מסלול</h2>
+    <div style="font-size:.9rem">
+      המסלול המלא, כולל קו הטיול על גבי מפת שטח — <a href="https://www.mapdirector.com/t/b1541aa2-c76f-4450-9488-69bf5669c615" target="_blank" rel="noopener">צפייה במפה האינטראקטיבית</a>
+    </div>
+  </section>
+
+  <section class="block">
     <h2>✈️ טיסות</h2>
     <table class="flights">
       <tr><th>תאריך</th><th>טיסה</th><th>מסלול</th><th>המראה</th><th>נחיתה</th></tr>
@@ -91,13 +98,13 @@
 <script>
 function bdi(s){ return `<bdi>${s}</bdi>`; }
 const DAYS = [
-  {n:0, date:"2026-09-01", he:"ג' 1.9", title:`נחיתה בזלצבורג ← ${bdi("Königssee")} + ${bdi("Klettersteig")} ${bdi("Grünstein")}`, phone:null, maps:"https://www.google.com/maps?q=47.5928,12.9850"},
+  {n:0, date:"2026-09-01", he:"ג' 1.9", title:`נחיתה בזלצבורג ← ${bdi("Königssee")} + ${bdi("Klettersteig")} ${bdi("Grünstein")} · לינה: ${bdi("Hotel Köppeleck")}`, phone:"+4986529420", maps:"https://www.google.com/maps?q=Am+K%C3%B6ppelwald+15,+83471+Sch%C3%B6nau+am+K%C3%B6nigssee"},
   {n:1, date:"2026-09-02", he:"ד' 2.9", title:`${bdi("Königssee")} ← ${bdi("Watzmannhaus")}`, phone:"+498652964222", maps:"https://www.google.com/maps?q=47.5713,12.9338"},
   {n:2, date:"2026-09-03", he:"ה' 3.9", title:`${bdi("Watzmannhaus")} ← ${bdi("Ingolstädter Haus")}`, phone:"+4365828353", maps:"https://www.google.com/maps?q=47.5016,12.8872"},
   {n:3, date:"2026-09-04", he:"ו' 4.9", title:`${bdi("Ingolstädter Haus")} ← ${bdi("Kärlingerhaus")} (הקטע הכי קשה)`, phone:"+4986526091010", maps:"https://www.google.com/maps?q=47.4955,12.9372"},
   {n:4, date:"2026-09-05", he:"ש' 5.9", title:`${bdi("Kärlingerhaus")} ← ${bdi("Wasseralm")}`, phone:"+4986526091160", maps:"https://www.google.com/maps?q=47.5130,12.9520"},
   {n:5, date:"2026-09-06", he:"א' 6.9", title:`${bdi("Wasseralm")} ← ${bdi("Carl-von-Stahl-Haus")} (חציית ${bdi("Hagengebirge")})`, phone:"+4986526559922", maps:"https://www.google.com/maps?q=47.5747,13.0426"},
-  {n:6, date:"2026-09-07", he:"ב' 7.9", title:`${bdi("Carl-von-Stahl-Haus")} ← מעבורת ← זלצבורג`, phone:null, maps:"https://www.google.com/maps?q=47.5928,12.9850"},
+  {n:6, date:"2026-09-07", he:"ב' 7.9", title:`${bdi("Carl-von-Stahl-Haus")} ← מעבורת ← זלצבורג · לינה: ${bdi("Hotel Scherer")}`, phone:null, maps:"https://www.google.com/maps?q=Plainstra%C3%9Fe+37,+5020+Salzburg"},
   {n:7, date:"2026-09-08", he:"ג' 8.9", title:"טיסה חזרה מזלצבורג", phone:null, maps:null},
 ];
 
